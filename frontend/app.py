@@ -24,9 +24,9 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 # Import model-related utilities
 from pytorch_lightning import seed_everything
-from utils.data import HWC3, apply_color, resize_image
-from utils.ddim import DDIMSampler
-from utils.model import create_model, load_state_dict
+from backend.src.models import HWC3, apply_color, resize_image
+from backend.src.models import DDIMSampler
+from backend.src.models import create_model, load_state_dict
 
 # Create FastAPI app
 app = FastAPI(title="Image Colorization API",
@@ -60,7 +60,7 @@ class ColorizationParams(BaseModel):
 def load_model():
     model = create_model('backend/src/models/cldm_v21.yaml').cpu()
     model.load_state_dict(load_state_dict(
-        r'checkpoints/epoch=2-step=44357.ckpt', location='cuda'))
+        r'backend/src/checkpoints/epoch=2-step=44357.ckpt', location='cuda'))
     model = model.cuda()
     return model, DDIMSampler(model)
 
