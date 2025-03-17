@@ -13,11 +13,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 import uvicorn
-from starlette.responses import FileResponse
 
-# Get the root directory of the project
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-sys.path.append(os.path.join(project_root, "backend", "src"))
+# Add the current directory to path to ensure imports work
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 # Import model-related utilities
 from pytorch_lightning import seed_everything
@@ -29,7 +27,7 @@ from utils.model import create_model, load_state_dict
 app = FastAPI(title="Image Colorization API",
               description="API for colorizing grayscale images using Stable Diffusion")
 
-# Add CORS middleware to allow cross-origin requests                        
+# Add CORS middleware to allow cross-origin requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -121,8 +119,7 @@ async def colorize_api(file: UploadFile = File(...),
     # Read image from request
     contents = await file.read()
     try:
-        input_image = Image.open(io.BytesIO(contents))
-        input_image = input_image.convert("RGB")
+        input_image = Image.open(io.BytesIO(contents)).convert("RGB")
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid image file: {str(e)}")
     
@@ -147,6 +144,8 @@ async def colorize_api(file: UploadFile = File(...),
         # Return the colored image (second item in results)
         if len(results) > 1:
             colored_image = results[1]
+            # Ensure the image is in RGB format
+            colored_image = cv2.cvtColor(colored_image, cv2.COLOR_BGR2RGB)
             img_bytes = cv2.imencode('.png', colored_image)[1].tobytes()
             return StreamingResponse(io.BytesIO(img_bytes), media_type="image/png")
         else:
