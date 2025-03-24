@@ -72,7 +72,7 @@ Returns the colorized image in PNG format.
 ## Acknowledgments
 - This project uses the ControlNet architecture from [lllyasviel/ControlNet](https://github.com/lllyasviel/ControlNet).
 
-- Data ideas from [rensortino/ColorizeNet](https://github.com/rensortino/ColorizeNet)
+
 
 
 ## Contributing
