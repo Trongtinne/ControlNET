@@ -36,6 +36,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global variable to cache the model and sampler
+MODEL_CACHE = None
+
+# Function to load the model (with caching)
+def load_model():
+    global MODEL_CACHE
+    if MODEL_CACHE is None:
+        print("Loading model for the first time...")
+        model = create_model('backend/src/models/cldm_v21.yaml').cpu()
+        model.load_state_dict(load_state_dict(
+            r'backend/src/checkpoints/epoch=2-step=44357.ckpt', location='cuda'))
+        model = model.cuda()
+        sampler = DDIMSampler(model)
+        MODEL_CACHE = (model, sampler)
+    return MODEL_CACHE
+
 # Create a class for colorization parameters
 class ColorizationParams(BaseModel):
     prompt: str = "Colorize this image"
@@ -49,14 +65,6 @@ class ColorizationParams(BaseModel):
     scale: float = 9.0
     seed: int = -1
     eta: float = 0.0
-
-# Function to load the model
-def load_model():
-    model = create_model('backend/src/models/cldm_v21.yaml').cpu()
-    model.load_state_dict(load_state_dict(
-        r'backend/src/checkpoints/epoch=2-step=44357.ckpt', location='cuda'))
-    model = model.cuda()
-    return model, DDIMSampler(model)
 
 # Function to process and colorize images
 def process(input_image, params):
@@ -77,6 +85,7 @@ def process(input_image, params):
             params.seed = random.randint(0, 65535)
         seed_everything(params.seed)
 
+        # Load the model (cached after the first call)
         model, ddim_sampler = load_model()
 
         cond = {"c_concat": [control], "c_crossattn": [
