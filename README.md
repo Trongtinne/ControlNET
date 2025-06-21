@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Colorization-for-grayscale-images
 
 This project provides a web-based application for colorizing grayscale images using the ControlNet architecture and Stable Diffusion. The application consists of a backend API built with FastAPI and a frontend interface built with Streamlit. The backend handles the image processing and colorization, while the frontend provides a user-friendly interface for uploading images and adjusting colorization parameters.
@@ -80,3 +81,6 @@ Contributions are welcome! Please open an issue or submit a pull request.
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
+=======
+# ControlNET
+>>>>>>> 37e6941558deb96b5be9b9a8e9e35fe4463a79df
