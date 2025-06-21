@@ -27,7 +27,7 @@ The project is divided into two main components:
 ### Installation
 1. Clone the repository:
     ```bash
-    git clone https://github.com/Qcymaq/Colorization-for-grayscale-images.git
+    git clone https://github.com/Trongtinne/ControlNET.git
     cd colorization-project
     ```
 2. Create a virtual environment (optional but recommended):
